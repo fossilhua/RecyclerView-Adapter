@@ -1,1 +1,1 @@
-include ':app', ':ptr-lib', ':lshrecyclerviewadapter'
+include ':app', ':lshrecyclerviewadapter'

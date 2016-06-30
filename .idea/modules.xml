@@ -5,7 +5,6 @@
       <module fileurl="file://$PROJECT_DIR$/RecyclerAdapterDemo.iml" filepath="$PROJECT_DIR$/RecyclerAdapterDemo.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/lshrecyclerviewadapter/lshrecyclerviewadapter.iml" filepath="$PROJECT_DIR$/lshrecyclerviewadapter/lshrecyclerviewadapter.iml" />
-      <module fileurl="file://$PROJECT_DIR$/ptr-lib/ptr-lib.iml" filepath="$PROJECT_DIR$/ptr-lib/ptr-lib.iml" />
     </modules>
   </component>
 </project>

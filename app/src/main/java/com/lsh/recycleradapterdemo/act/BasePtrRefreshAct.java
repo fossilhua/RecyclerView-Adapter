@@ -31,7 +31,7 @@ public abstract class BasePtrRefreshAct extends BaseRefreshAct {
                     public void run() {
                         pullDownData();
                     }
-                }, 1000);
+                }, 100);
             }
 
             @Override
