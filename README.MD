@@ -7,7 +7,7 @@ LshRecyclerAdapter 是针对于RecyclerView的adapter。主要功能有添加hea
 
 [Demo APK下载](https://raw.githubusercontent.com/fossilhua/RecyclerView-Adapter/master/raw/app-debug.apk)
 
-## How to Use
+### How to Use
 
 ###### 1.Integration jcenter
 
@@ -36,6 +36,22 @@ public class MyAdapter extends BaseAdapter<DataBean> {
         tv.setText(dataBean.getDes());
     }
 }
+
+
+
+```
+Activity中使用
+```
+ mBaseAdapter.setOnLoadMoreListener(mRvBaseRecycler, new BaseAdapter.OnLoadMoreListener() {
+            @Override
+            public void onLoadMore() {
+                //get data
+            }
+            @Override
+            public boolean isCanLoadMore() {
+                return !isPullDown();
+            }
+        });
 ```
 
 ### Version Log
