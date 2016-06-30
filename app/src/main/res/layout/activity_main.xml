@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <!--ptr-->
+    <TextView
+        style="@style/Main_Text_Base"
+        android:text="Ptr Refresh"
+        />
+
+    <TextView
+        style="@style/Main_Text"
+        android:onClick="PtrRefreshLinearLayout"
+        android:text="Ptr LinearLayout"
+        />
+
+    <TextView
+        style="@style/Main_Text"
+        android:onClick="PtrRefreshLinearLayoutWithHead"
+        android:text="Ptr LinearLayout With Head"
+        />
+
+    <TextView
+        style="@style/Main_Text"
+        android:onClick="PtrRefreshStaggered"
+        android:text="Ptr Staggered"
+        />
+    <!--swipe-->
+    <TextView
+        style="@style/Main_Text_Base"
+        android:text="swipe Refresh"
+        />
+
+    <TextView
+        style="@style/Main_Text"
+        android:onClick="SwipeRefreshLinearLayout"
+        android:text="Swipe LinearLayout"
+        />
+
+    <TextView
+        style="@style/Main_Text"
+        android:onClick="SwipeRefreshLinearLayoutWithHead"
+        android:text="Swipe LinearLayout With Head"
+        />
+
+    <TextView
+        style="@style/Main_Text"
+        android:onClick="SwipeRefreshStaggered"
+        android:text="Swipe Staggered"
+        />
+</LinearLayout>
