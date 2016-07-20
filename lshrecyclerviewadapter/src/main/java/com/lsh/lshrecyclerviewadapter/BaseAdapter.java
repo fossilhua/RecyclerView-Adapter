@@ -78,14 +78,18 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<RecyclerView.V
             bottomHolder = (BottomHolder) holder;
             bottomHolder.bottomText.setText(bottomDes);
         } else {
-            onBindData((BaseViewHolder) holder, mDataList, position);
+            int pos = position;
+            if (isHeadEnable) {
+                pos -= 1;
+            }
+            onBindData((BaseViewHolder) holder, mDataList, pos);
         }
     }
 
 
     @Override
     public int getItemViewType(int position) {
-        if (isBottomEnable && position == mDataList.size()) {
+        if (isBottomEnable && position == getItemCount() - 1) {
             return TYPE_FOOTER;
         } else if (isHeadEnable && position == 0) {
             return TYPE_HEADER;
@@ -97,10 +101,14 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<RecyclerView.V
     public int getItemCount() {
         int totalSize = mDataList.size();
         if (isBottomEnable) {
-            return totalSize + 1;
+            totalSize = totalSize + 1;
         }
-        return mDataList.size();
+        if (isHeadEnable) {
+            totalSize = totalSize + 1;
+        }
+        return totalSize;
     }
+
 
     ///////////////////////////////////////////////////////////////////////////
 // 扩展部分
@@ -124,6 +132,7 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<RecyclerView.V
     public void addHeadView(View headView) {
         this.headView = headView;
         isHeadEnable = true;
+        notifyDataSetChanged();
     }
 
 

@@ -16,7 +16,7 @@ Please follow the latest publishing aar on jcenter.
 follow by the gradle code
 ```gradle
 dependencies{
-    compile 'com.github.lsh:recyclerview-adapter:1.0.1'
+    compile 'com.github.lsh:recyclerview-adapter:1.0.2'
 }
 ```
 
@@ -61,6 +61,8 @@ Activity中使用
 添加加载更多、head功能
 
 * ***v1.0.2*** 
+
+修复添加headview 第一条数据不显示的bug
 
 ### Thanks
 

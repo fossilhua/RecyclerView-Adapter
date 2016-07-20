@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/RecyclerAdapterDemo.iml" filepath="$PROJECT_DIR$/RecyclerAdapterDemo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/RecyclerView-Adapter.iml" filepath="$PROJECT_DIR$/RecyclerView-Adapter.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/lshrecyclerviewadapter/lshrecyclerviewadapter.iml" filepath="$PROJECT_DIR$/lshrecyclerviewadapter/lshrecyclerviewadapter.iml" />
     </modules>
