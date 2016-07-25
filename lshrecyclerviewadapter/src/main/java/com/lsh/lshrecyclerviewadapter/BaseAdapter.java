@@ -44,12 +44,8 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<RecyclerView.V
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == TYPE_HEADER) {
-            if (headView != null) {
-                return new HeadHolder(headView);
-            } else {
-                throw new IllegalArgumentException("headView can't be null");
-            }
-
+//            setFull(headView, parent);
+            return new HeadHolder(headView);
         } else if (viewType == TYPE_FOOTER) {
             View view = LayoutInflater.from(mContext).inflate(R.layout.item_foot, parent, false);
             setFull(view, parent);
@@ -100,10 +96,10 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<RecyclerView.V
     @Override
     public int getItemCount() {
         int totalSize = mDataList.size();
-        if (isBottomEnable) {
+        if (isHeadEnable) {
             totalSize = totalSize + 1;
         }
-        if (isHeadEnable) {
+        if (isBottomEnable) {
             totalSize = totalSize + 1;
         }
         return totalSize;

@@ -28,6 +28,11 @@
         android:onClick="PtrRefreshStaggered"
         android:text="Ptr Staggered"
         />
+    <TextView
+        style="@style/Main_Text"
+        android:onClick="PtrRefreshStaggeredWithHead"
+        android:text="Ptr Staggered With Head"
+        />
     <!--swipe-->
     <TextView
         style="@style/Main_Text_Base"

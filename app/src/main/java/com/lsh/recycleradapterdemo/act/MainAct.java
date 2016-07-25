@@ -28,6 +28,9 @@ public class MainAct extends AppCompatActivity {
     public void PtrRefreshStaggered(View view) {
         startActivity(new Intent(this, PtrStaggeredRefreshAct.class));
     }
+    public void PtrRefreshStaggeredWithHead(View view) {
+        startActivity(new Intent(this, PtrRefreshStaggeredWithHeadAct.class));
+    }
 
     /*SwipeRefresh*/
     public void SwipeRefreshLinearLayout(View view) {
