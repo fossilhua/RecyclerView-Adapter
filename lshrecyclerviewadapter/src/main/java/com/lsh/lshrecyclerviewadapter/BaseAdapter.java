@@ -2,6 +2,7 @@ package com.lsh.lshrecyclerviewadapter;
 
 import android.content.Context;
 import android.support.v4.view.ViewCompat;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
@@ -38,17 +39,15 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<RecyclerView.V
 
     public abstract void onBindData(BaseViewHolder holder, List<T> data, int position);
 
-    protected final StaggeredGridLayoutManager.LayoutParams fullSpanLayout = new
-            StaggeredGridLayoutManager.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+//    protected final StaggeredGridLayoutManager.LayoutParams fullSpanLayout = new
+//            StaggeredGridLayoutManager.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == TYPE_HEADER) {
-//            setFull(headView, parent);
             return new HeadHolder(headView);
         } else if (viewType == TYPE_FOOTER) {
             View view = LayoutInflater.from(mContext).inflate(R.layout.item_foot, parent, false);
-            setFull(view, parent);
             return new BottomHolder(view);
         } else {
             return new BaseViewHolder(LayoutInflater.from(mContext).inflate(itemLayout, parent, false));
@@ -56,13 +55,44 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<RecyclerView.V
 
     }
 
-    private void setFull(View view, ViewGroup parent) {
-        RecyclerView recyclerView = (RecyclerView) parent;
-        if (recyclerView.getLayoutManager() instanceof StaggeredGridLayoutManager) {
-            fullSpanLayout.setFullSpan(true);
-            view.setLayoutParams(fullSpanLayout);
+    @Override
+    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+        RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
+        if (manager instanceof GridLayoutManager) {
+            final GridLayoutManager gridManager = ((GridLayoutManager) manager);
+            gridManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+                @Override
+                public int getSpanSize(int position) {
+                    return getItemViewType(position) == TYPE_HEADER ? gridManager.getSpanCount() : 1;
+                }
+            });
         }
     }
+
+    @Override
+    public void onViewAttachedToWindow(RecyclerView.ViewHolder holder) {
+        super.onViewAttachedToWindow(holder);
+        int pos = holder.getLayoutPosition();
+        int type = getItemViewType(pos);
+        if (type == TYPE_HEADER || type == TYPE_FOOTER) {
+            ViewGroup.LayoutParams layoutParams = holder.itemView.getLayoutParams();
+            if (layoutParams != null && layoutParams instanceof StaggeredGridLayoutManager.LayoutParams) {
+                StaggeredGridLayoutManager.LayoutParams p =
+                        (StaggeredGridLayoutManager.LayoutParams) layoutParams;
+                p.setFullSpan(true);
+            }
+        }
+
+    }
+
+//    private void setFull(View view, ViewGroup parent) {
+//        RecyclerView recyclerView = (RecyclerView) parent;
+//        if (recyclerView.getLayoutManager() instanceof StaggeredGridLayoutManager) {
+//            fullSpanLayout.setFullSpan(true);
+//            view.setLayoutParams(fullSpanLayout);
+//        }
+//    }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
