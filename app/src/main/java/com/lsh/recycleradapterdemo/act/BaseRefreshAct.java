@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Toast;
 
 import com.lsh.lshrecyclerviewadapter.BaseAdapter;
 import com.lsh.recycleradapterdemo.DataBean;
@@ -23,7 +24,7 @@ import java.util.List;
 public abstract class BaseRefreshAct extends AppCompatActivity {
     private RecyclerView mRvBaseRecycler;
     private List<DataBean> mDataList = new ArrayList<>();
-    private MyAdapter mBaseAdapter;
+    public MyAdapter mBaseAdapter;
     int page = 1;
 
     protected abstract RecyclerView.LayoutManager getLayoutManager();
@@ -72,6 +73,19 @@ public abstract class BaseRefreshAct extends AppCompatActivity {
         });
         pullDownRefresh();
         firstRefresh();
+        mBaseAdapter.setOnItemClickListener(new BaseAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(int pos) {
+                Toast.makeText(BaseRefreshAct.this, mDataList.get(pos).getDes(), Toast.LENGTH_SHORT).show();
+            }
+        });
+        mBaseAdapter.setOnItemLongClickListener(new BaseAdapter.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(int pos) {
+                Toast.makeText(BaseRefreshAct.this, "long click "+mDataList.get(pos).getDes(), Toast.LENGTH_SHORT).show();
+                return true;
+            }
+        });
     }
 
     //获取更多
@@ -90,7 +104,7 @@ public abstract class BaseRefreshAct extends AppCompatActivity {
     Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            Log.e("","get data................");
+            Log.e("", "get data................");
             if (page == 1) {
                 mDataList.clear();
                 pullDownComplete();

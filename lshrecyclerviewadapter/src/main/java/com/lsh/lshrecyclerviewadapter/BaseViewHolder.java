@@ -9,17 +9,15 @@ import android.view.View;
  */
 public class BaseViewHolder extends RecyclerView.ViewHolder {
     public SparseArray<View> viewList = new SparseArray<>();
-    private View convertView;
 
     public BaseViewHolder(View itemView) {
         super(itemView);
-        this.convertView = itemView;
     }
 
     public <T extends View> T retrieveView(int viewId) {
         View view = viewList.get(viewId);
         if (view == null) {
-            view = convertView.findViewById(viewId);
+            view = itemView.findViewById(viewId);
             viewList.put(viewId, view);
         }
         return (T) view;

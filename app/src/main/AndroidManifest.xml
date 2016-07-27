@@ -25,8 +25,6 @@
         <activity android:name=".act.PtrRefreshStaggeredWithHeadAct"/>
 
 
-
-
         <activity android:name=".act.SwipeLinearLayoutRefreshAct"/>
         <activity android:name=".act.SwipeLinearLayoutWithHeadAct"/>
         <activity android:name=".act.SwipeStaggeredRefreshAct"/>

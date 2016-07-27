@@ -39,9 +39,6 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<RecyclerView.V
 
     public abstract void onBindData(BaseViewHolder holder, List<T> data, int position);
 
-//    protected final StaggeredGridLayoutManager.LayoutParams fullSpanLayout = new
-//            StaggeredGridLayoutManager.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == TYPE_HEADER) {
@@ -50,7 +47,9 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<RecyclerView.V
             View view = LayoutInflater.from(mContext).inflate(R.layout.item_foot, parent, false);
             return new BottomHolder(view);
         } else {
-            return new BaseViewHolder(LayoutInflater.from(mContext).inflate(itemLayout, parent, false));
+            View itemView = LayoutInflater.from(mContext).inflate(itemLayout, parent, false);
+
+            return new BaseViewHolder(itemView);
         }
 
     }
@@ -86,13 +85,6 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<RecyclerView.V
 
     }
 
-//    private void setFull(View view, ViewGroup parent) {
-//        RecyclerView recyclerView = (RecyclerView) parent;
-//        if (recyclerView.getLayoutManager() instanceof StaggeredGridLayoutManager) {
-//            fullSpanLayout.setFullSpan(true);
-//            view.setLayoutParams(fullSpanLayout);
-//        }
-//    }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
@@ -104,10 +96,24 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<RecyclerView.V
             bottomHolder = (BottomHolder) holder;
             bottomHolder.bottomText.setText(bottomDes);
         } else {
-            int pos = position;
+            int pos = holder.getAdapterPosition();
             if (isHeadEnable) {
                 pos -= 1;
             }
+            final int finalPos = pos;
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mOnItemClickListener.onItemClick(finalPos);
+
+                }
+            });
+            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    return mOnItemLongClickListener.onItemLongClick(finalPos);
+                }
+            });
             onBindData((BaseViewHolder) holder, mDataList, pos);
         }
     }
@@ -187,7 +193,29 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<RecyclerView.V
         notifyDataSetChanged();
     }
 
+    ///////////////////////////////////////////////////////////////////////////
+// itemclick
+///////////////////////////////////////////////////////////////////////////
+    OnItemClickListener mOnItemClickListener;
 
+    public void setOnItemClickListener(OnItemClickListener mOnItemClickListener) {
+        this.mOnItemClickListener = mOnItemClickListener;
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(int pos);
+    }
+
+    //
+    OnItemLongClickListener mOnItemLongClickListener;
+
+    public void setOnItemLongClickListener(OnItemLongClickListener mOnItemLongClickListener) {
+        this.mOnItemLongClickListener = mOnItemLongClickListener;
+    }
+
+    public interface OnItemLongClickListener {
+        boolean onItemLongClick(int pos);
+    }
     ///////////////////////////////////////////////////////////////////////////
 // 加载更多
 ///////////////////////////////////////////////////////////////////////////

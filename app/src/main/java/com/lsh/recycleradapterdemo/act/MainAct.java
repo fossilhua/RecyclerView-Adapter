@@ -8,13 +8,11 @@ import android.view.View;
 import com.lsh.recycleradapterdemo.R;
 
 public class MainAct extends AppCompatActivity {
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
     }
-
 
     /*PtrRefresh*/
     public void PtrRefreshLinearLayout(View view) {
