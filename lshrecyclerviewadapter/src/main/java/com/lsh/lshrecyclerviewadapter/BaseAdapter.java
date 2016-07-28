@@ -25,7 +25,7 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<RecyclerView.V
     boolean isLoadingMore = false;//是否正在加载
 
     private List<T> mDataList;
-    private Context mContext;
+    protected Context mContext;
     private int itemLayout;
 
     private String bottomDes = "加载更多";
