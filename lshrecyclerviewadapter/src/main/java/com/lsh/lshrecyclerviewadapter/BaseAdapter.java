@@ -17,19 +17,27 @@ import java.util.List;
  * Created by hua on 2016/6/23.
  */
 public abstract class BaseAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private static final int TYPE_CONTENT = 0;
-    private static final int TYPE_HEADER = 1;
-    private static final int TYPE_FOOTER = 2;
-    boolean isBottomEnable = false;//是否显示底部loadmore
-    boolean isHeadEnable = false;//是否添加了headview
-    boolean isLoadingMore = false;//是否正在加载
+    public static final int TYPE_CONTENT = 0;
+    public static final int TYPE_HEADER = 1;
+    public static final int TYPE_FOOTER = 2;
+    protected boolean isBottomEnable = false;//是否显示底部loadmore
+    protected boolean isHeadEnable = false;//是否添加了headview
+    protected boolean isLoadingMore = false;//是否正在加载
 
-    private List<T> mDataList;
+    protected List<T> mDataList;
     protected Context mContext;
     private int itemLayout;
 
     private String bottomDes = "加载更多";
     private BottomHolder bottomHolder;
+
+    public boolean isBottomEnable() {
+        return isBottomEnable;
+    }
+
+    public boolean isHeadEnable() {
+        return isHeadEnable;
+    }
 
     public BaseAdapter(Context mContext, List<T> list, int itemLayout) {
         this.mDataList = list;
