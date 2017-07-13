@@ -44,12 +44,12 @@ public abstract class BasePtrRefreshAct extends BaseRefreshAct {
 
     @Override
     protected void firstRefresh() {
-        ptrFrame.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                ptrFrame.autoRefresh();
-            }
-        }, 100);
+//        ptrFrame.postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                ptrFrame.autoRefresh();
+//            }
+//        }, 100);
     }
 
     @Override

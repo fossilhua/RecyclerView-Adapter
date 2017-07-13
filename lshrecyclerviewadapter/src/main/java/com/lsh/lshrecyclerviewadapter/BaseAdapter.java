@@ -20,9 +20,12 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<RecyclerView.V
     public static final int TYPE_CONTENT = 0;
     public static final int TYPE_HEADER = 1;
     public static final int TYPE_FOOTER = 2;
+    public static final int TYPE_STATUS = 3;//状态标识：加载中，加载失败 ，空界面
     protected boolean isBottomEnable = false;//是否显示底部loadmore
     protected boolean isHeadEnable = false;//是否添加了headview
     protected boolean isLoadingMore = false;//是否正在加载
+    protected boolean isShowStatus = false;//是否显示status界面
+
 
     protected List<T> mDataList;
     protected Context mContext;
@@ -54,6 +57,8 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<RecyclerView.V
         } else if (viewType == TYPE_FOOTER) {
             View view = LayoutInflater.from(mContext).inflate(R.layout.item_foot, parent, false);
             return new BottomHolder(view);
+        } else if (viewType == TYPE_STATUS) {
+            return new StatusHolder(mStatusView);
         } else {
             View itemView = LayoutInflater.from(mContext).inflate(itemLayout, parent, false);
 
@@ -103,9 +108,14 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<RecyclerView.V
         } else if (viewType == TYPE_FOOTER) {
             bottomHolder = (BottomHolder) holder;
             bottomHolder.bottomText.setText(bottomDes);
+        } else if (viewType == TYPE_STATUS) {
+            //do nothing
         } else {
             int pos = holder.getAdapterPosition();
             if (isHeadEnable) {
+                pos -= 1;
+            }
+            if (isShowStatus) {
                 pos -= 1;
             }
             final int finalPos = pos;
@@ -137,6 +147,8 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<RecyclerView.V
             return TYPE_FOOTER;
         } else if (isHeadEnable && position == 0) {
             return TYPE_HEADER;
+        } else if (isShowStatus && ((isHeadEnable && position == 1) || (!isHeadEnable && position == 0))) {
+            return TYPE_STATUS;
         }
         return TYPE_CONTENT;
     }
@@ -148,6 +160,9 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<RecyclerView.V
             totalSize = totalSize + 1;
         }
         if (isBottomEnable) {
+            totalSize = totalSize + 1;
+        }
+        if (isShowStatus) {
             totalSize = totalSize + 1;
         }
         return totalSize;
@@ -171,7 +186,7 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<RecyclerView.V
     }
 
     //header 请在setadapter()前addView  否则无效
-    View headView;
+    private View headView;
 
     public void addHeadView(View headView) {
         this.headView = headView;
@@ -180,35 +195,61 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<RecyclerView.V
     }
 
 
-    class HeadHolder extends RecyclerView.ViewHolder {
+    private class HeadHolder extends RecyclerView.ViewHolder {
 
-        public HeadHolder(View itemView) {
+        HeadHolder(View itemView) {
             super(itemView);
         }
     }
 
     //footer
-    class BottomHolder extends RecyclerView.ViewHolder {
+    private class BottomHolder extends RecyclerView.ViewHolder {
         private TextView bottomText;
         private ProgressBar progressBar;
 
-        public BottomHolder(View itemView) {
+        BottomHolder(View itemView) {
             super(itemView);
             bottomText = (TextView) itemView.findViewById(R.id.tv_item_bottom);
             progressBar = (ProgressBar) itemView.findViewById(R.id.pb_item_loading);
         }
     }
 
-
     public void setBottomEnable(boolean bln) {
         isBottomEnable = bln;
         notifyDataSetChanged();
     }
 
+    //status
+    private View mStatusView;
+
+    public void addStatusView(View mStatusView) {
+        if (mDataList != null) {
+            mDataList.clear();
+        }
+        this.mStatusView = mStatusView;
+        isShowStatus = true;
+        notifyDataSetChanged();
+    }
+
+    public void removeStatusView() {
+        mStatusView = null;
+        isShowStatus = false;
+        notifyDataSetChanged();
+    }
+
+    private class StatusHolder extends RecyclerView.ViewHolder {
+
+
+        StatusHolder(View itemView) {
+            super(itemView);
+
+        }
+    }
+
     ///////////////////////////////////////////////////////////////////////////
 // itemclick
 ///////////////////////////////////////////////////////////////////////////
-    OnItemClickListener mOnItemClickListener;
+    private OnItemClickListener mOnItemClickListener;
 
     public void setOnItemClickListener(OnItemClickListener mOnItemClickListener) {
         this.mOnItemClickListener = mOnItemClickListener;
@@ -219,7 +260,7 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<RecyclerView.V
     }
 
     //
-    OnItemLongClickListener mOnItemLongClickListener;
+    private OnItemLongClickListener mOnItemLongClickListener;
 
     public void setOnItemLongClickListener(OnItemLongClickListener mOnItemLongClickListener) {
         this.mOnItemLongClickListener = mOnItemLongClickListener;
@@ -238,11 +279,15 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<RecyclerView.V
 
 
     public void setOnLoadMoreListener(RecyclerView recyclerView, final OnLoadMoreListener onLoadMoreListener) {
+        if (isShowStatus) {
+            return;
+        }
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 //SCROLL_STATE_IDLE  闲置的 SCROLL_STATE_DRAGGING 拖曳的 SCROLL_STATE_SETTLING 固定的
+//                !isCannotScollVertically(recyclerView)&&
                 if (!isLoadingMore && newState == RecyclerView.SCROLL_STATE_IDLE && isScollBottom(recyclerView)) {
                     if (onLoadMoreListener.isCanLoadMore()) {
                         isLoadingMore = true;
@@ -289,4 +334,7 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<RecyclerView.V
         }
     }
 
+    private boolean isCannotScollVertically(RecyclerView recyclerView) {
+        return ViewCompat.canScrollVertically(recyclerView, -1) && ViewCompat.canScrollVertically(recyclerView, 1);
+    }
 }

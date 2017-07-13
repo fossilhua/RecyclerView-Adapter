@@ -8,9 +8,11 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.lsh.lshrecyclerviewadapter.BaseAdapter;
+import com.lsh.lshrecyclerviewadapter.ViewHelper;
 import com.lsh.recycleradapterdemo.DataBean;
 import com.lsh.recycleradapterdemo.MyAdapter;
 import com.lsh.recycleradapterdemo.R;
@@ -44,6 +46,7 @@ public abstract class BaseRefreshAct extends AppCompatActivity {
 
     protected abstract boolean isPullDown();//是否下拉刷新中
 
+    View headView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,11 +56,13 @@ public abstract class BaseRefreshAct extends AppCompatActivity {
         mRvBaseRecycler = (RecyclerView) findViewById(R.id.rv_base_recycler);
         mRvBaseRecycler.setLayoutManager(getLayoutManager());
         mBaseAdapter = new MyAdapter(BaseRefreshAct.this, mDataList);
+
         int headViewLayout = getHeadViewLaout();
         if (headViewLayout != 0) {
-            View headView = LayoutInflater.from(this).inflate(getHeadViewLaout(), mRvBaseRecycler, false);
+            headView = LayoutInflater.from(this).inflate(getHeadViewLaout(), mRvBaseRecycler, false);
             mBaseAdapter.addHeadView(headView);
         }
+
         mRvBaseRecycler.setAdapter(mBaseAdapter);
         mBaseAdapter.setOnLoadMoreListener(mRvBaseRecycler, new BaseAdapter.OnLoadMoreListener() {
             @Override
@@ -82,7 +87,7 @@ public abstract class BaseRefreshAct extends AppCompatActivity {
         mBaseAdapter.setOnItemLongClickListener(new BaseAdapter.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(int pos) {
-                Toast.makeText(BaseRefreshAct.this, "long click "+mDataList.get(pos).getDes(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(BaseRefreshAct.this, "long click " + mDataList.get(pos).getDes(), Toast.LENGTH_SHORT).show();
                 return true;
             }
         });
@@ -104,6 +109,7 @@ public abstract class BaseRefreshAct extends AppCompatActivity {
     Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
+
             Log.e("", "get data................");
             if (page == 1) {
                 mDataList.clear();
@@ -114,11 +120,20 @@ public abstract class BaseRefreshAct extends AppCompatActivity {
             for (int i = 0; i < 10; i++) {
                 mDataList.add(new DataBean("", "item" + (page - 1) + "" + i));
             }
+            if (mDataList.size()>0) {
+                mBaseAdapter.removeStatusView();
+            }
             mBaseAdapter.setBottomEnable(true);
+            mBaseAdapter.removeStatusView();
             mBaseAdapter.notifyDataSetChanged();
 
         }
     };
+
+    private void showStatus() {
+        View view = LayoutInflater.from(this).inflate(R.layout.status_loading, mRvBaseRecycler, false);
+        mBaseAdapter.addStatusView(new ViewHelper().initStatusView(this, view, headView, mRvBaseRecycler));
+    }
 
     /**
      * getData
