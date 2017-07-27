@@ -5,22 +5,27 @@ import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by hua on 2016/6/23.
  */
 public abstract class BaseAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
     public static final int TYPE_CONTENT = 0;
-    public static final int TYPE_HEADER = 1;
+    public static final int TYPE_HEADER = 10;
     public static final int TYPE_FOOTER = 2;
     public static final int TYPE_STATUS = 3;//状态标识：加载中，加载失败 ，空界面
+    private int headType = TYPE_HEADER;
     protected boolean isBottomEnable = false;//是否显示底部loadmore
     protected boolean isHeadEnable = false;//是否添加了headview
     protected boolean isLoadingMore = false;//是否正在加载
@@ -52,8 +57,8 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<RecyclerView.V
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        if (viewType == TYPE_HEADER) {
-            return new HeadHolder(headView);
+        if (viewType >= TYPE_HEADER) {
+            return new HeadHolder(headViewList.get(viewType));
         } else if (viewType == TYPE_FOOTER) {
             View view = LayoutInflater.from(mContext).inflate(R.layout.item_foot, parent, false);
             return new BottomHolder(view);
@@ -76,7 +81,7 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<RecyclerView.V
             gridManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
                 @Override
                 public int getSpanSize(int position) {
-                    return getItemViewType(position) == TYPE_HEADER ? gridManager.getSpanCount() : 1;
+                    return getItemViewType(position) >= TYPE_HEADER || getItemViewType(position) == TYPE_STATUS ? gridManager.getSpanCount() : 1;
                 }
             });
         }
@@ -87,7 +92,7 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<RecyclerView.V
         super.onViewAttachedToWindow(holder);
         int pos = holder.getLayoutPosition();
         int type = getItemViewType(pos);
-        if (type == TYPE_HEADER || type == TYPE_FOOTER) {
+        if (type >= TYPE_HEADER || type == TYPE_FOOTER || type == TYPE_STATUS) {
             ViewGroup.LayoutParams layoutParams = holder.itemView.getLayoutParams();
             if (layoutParams != null && layoutParams instanceof StaggeredGridLayoutManager.LayoutParams) {
                 StaggeredGridLayoutManager.LayoutParams p =
@@ -102,7 +107,8 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<RecyclerView.V
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         int viewType = getItemViewType(position);
-        if (viewType == TYPE_HEADER) {
+        Log.d("onBindViewHolder", "viewType=" + viewType+"=="+position);
+        if (viewType >= TYPE_HEADER) {
             //do nothing
 
         } else if (viewType == TYPE_FOOTER) {
@@ -113,7 +119,7 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<RecyclerView.V
         } else {
             int pos = holder.getAdapterPosition();
             if (isHeadEnable) {
-                pos -= 1;
+                pos -= headViewList.size();
             }
             if (isShowStatus) {
                 pos -= 1;
@@ -145,9 +151,9 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<RecyclerView.V
     public int getItemViewType(int position) {
         if (isBottomEnable && position == getItemCount() - 1) {
             return TYPE_FOOTER;
-        } else if (isHeadEnable && position == 0) {
-            return TYPE_HEADER;
-        } else if (isShowStatus && ((isHeadEnable && position == 1) || (!isHeadEnable && position == 0))) {
+        } else if (isHeadEnable && position < headViewList.size()) {
+            return headViewList.keyAt(position);
+        } else if (isShowStatus && ((isHeadEnable && (position == headViewList.size())) || (!isHeadEnable && position == 0))) {
             return TYPE_STATUS;
         }
         return TYPE_CONTENT;
@@ -157,7 +163,7 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<RecyclerView.V
     public int getItemCount() {
         int totalSize = mDataList.size();
         if (isHeadEnable) {
-            totalSize = totalSize + 1;
+            totalSize = totalSize + headViewList.size();
         }
         if (isBottomEnable) {
             totalSize = totalSize + 1;
@@ -186,14 +192,19 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<RecyclerView.V
     }
 
     //header 请在setadapter()前addView  否则无效
-    private View headView;
+    private SparseArray<View> headViewList=new SparseArray<>();
 
     public void addHeadView(View headView) {
-        this.headView = headView;
+        headType++;
+        headViewList.append(headType, headView);
         isHeadEnable = true;
         notifyDataSetChanged();
     }
-
+//    public void addHeadView(List<View> headViewList) {
+//        this.headViewList = headViewList;
+//        isHeadEnable = true;
+//        notifyDataSetChanged();
+//    }
 
     private class HeadHolder extends RecyclerView.ViewHolder {
 
@@ -238,8 +249,6 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<RecyclerView.V
     }
 
     private class StatusHolder extends RecyclerView.ViewHolder {
-
-
         StatusHolder(View itemView) {
             super(itemView);
 

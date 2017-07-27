@@ -29,7 +29,7 @@ publish {
     userOrg = 'fossilhua'//bintray.com用户名
     groupId = 'com.github.lsh'//jcenter上的路径
     artifactId = 'recyclerview-adapter'//项目名称
-    publishVersion = '1.0.9'//版本号
-    desc = 'recyclerview adapter'//
+    publishVersion = '1.1.0'//版本号
+    desc = '添加多head 支持'//
     website = 'https://github.com/fossilhua/RecyclerView-Adapter'//网站，不重要；
 }

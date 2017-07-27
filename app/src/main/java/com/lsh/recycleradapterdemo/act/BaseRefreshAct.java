@@ -24,8 +24,8 @@ import java.util.List;
  * Created by hua on 2016/6/30.
  */
 public abstract class BaseRefreshAct extends AppCompatActivity {
-    private RecyclerView mRvBaseRecycler;
-    private List<DataBean> mDataList = new ArrayList<>();
+    public RecyclerView mRvBaseRecycler;
+    public List<DataBean> mDataList = new ArrayList<>();
     public MyAdapter mBaseAdapter;
     int page = 1;
 
@@ -56,13 +56,12 @@ public abstract class BaseRefreshAct extends AppCompatActivity {
         mRvBaseRecycler = (RecyclerView) findViewById(R.id.rv_base_recycler);
         mRvBaseRecycler.setLayoutManager(getLayoutManager());
         mBaseAdapter = new MyAdapter(BaseRefreshAct.this, mDataList);
-
         int headViewLayout = getHeadViewLaout();
         if (headViewLayout != 0) {
             headView = LayoutInflater.from(this).inflate(getHeadViewLaout(), mRvBaseRecycler, false);
-            mBaseAdapter.addHeadView(headView);
+//            mBaseAdapter.addHeadView(headView);
         }
-
+        addHeadView();
         mRvBaseRecycler.setAdapter(mBaseAdapter);
         mBaseAdapter.setOnLoadMoreListener(mRvBaseRecycler, new BaseAdapter.OnLoadMoreListener() {
             @Override
@@ -91,6 +90,10 @@ public abstract class BaseRefreshAct extends AppCompatActivity {
                 return true;
             }
         });
+    }
+
+    protected void addHeadView() {
+
     }
 
     //获取更多
